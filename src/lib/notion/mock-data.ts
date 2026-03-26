@@ -1,0 +1,56 @@
+﻿import type { PostDetail } from "@/lib/notion/types";
+
+export const mockPosts: PostDetail[] = [
+  {
+    id: "post-1",
+    title: "用 Next.js 和 Notion 搭建个人博客的基础骨架",
+    slug: "nextjs-notion-blog-starter",
+    summary: "从目录结构、数据层到页面路由，把一套可长期维护的博客骨架先搭起来。",
+    publishedAt: "2026-03-20",
+    tags: ["Next.js", "Notion", "Architecture"],
+    category: "Engineering",
+    cover: null,
+    featured: true,
+    blocks: [],
+    content: [
+      { id: "1", type: "paragraph", text: "这篇文章解释为什么个人博客适合采用 Next.js + Notion 的组合。" },
+      { id: "2", type: "heading_2", text: "为什么这样组合" },
+      { id: "3", type: "paragraph", text: "Notion 负责编辑体验，Next.js 负责性能、SEO 和扩展能力，职责清晰。" },
+      { id: "4", type: "heading_3", text: "首期应该先做什么" },
+      { id: "5", type: "bulleted_list_item", text: "打通文章列表页" },
+      { id: "6", type: "bulleted_list_item", text: "打通文章详情页" },
+      { id: "7", type: "bulleted_list_item", text: "配置 SEO 与缓存" },
+    ],
+  },
+  {
+    id: "post-2",
+    title: "把 Notion Database 设计成适合博客的数据源",
+    slug: "design-notion-database-for-blog",
+    summary: "文章字段不是越多越好，关键在于 Slug、Status、PublishedAt 和 Tags 的稳定性。",
+    publishedAt: "2026-03-18",
+    tags: ["Notion", "CMS"],
+    category: "Content Ops",
+    cover: null,
+    featured: true,
+    blocks: [],
+    content: [
+      { id: "8", type: "paragraph", text: "建议用一个 Posts Database 管理所有文章元数据。" },
+      { id: "9", type: "code", text: "Title / Slug / Status / PublishedAt / Summary / Tags" },
+    ],
+  },
+  {
+    id: "post-3",
+    title: "给个人博客加上 SEO、Sitemap 和 Revalidate",
+    slug: "seo-sitemap-revalidate-blog",
+    summary: "内容站点真正上线前，至少要把元信息、站点地图和缓存刷新链路补齐。",
+    publishedAt: "2026-03-15",
+    tags: ["SEO", "Next.js"],
+    category: "Growth",
+    cover: null,
+    featured: false,
+    blocks: [],
+    content: [
+      { id: "10", type: "paragraph", text: "博客项目最常见的问题不是页面做不出来，而是上线后不可维护。" },
+    ],
+  },
+];
