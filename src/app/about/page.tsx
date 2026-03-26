@@ -1,4 +1,6 @@
 ﻿import type { Metadata } from "next";
+import { PageIntro } from "@/components/page-intro";
+import { Surface } from "@/components/surface";
 
 export const metadata: Metadata = {
   title: "About",
@@ -14,21 +16,19 @@ const points = [
 
 export default function AboutPage() {
   return (
-    <section className="space-y-8">
-      <div className="space-y-4">
-        <span className="eyebrow">About This Build</span>
-        <h1 className="page-title">关于这套博客架构</h1>
-        <p className="page-copy max-w-3xl">
-          这个项目采用典型的 Headless CMS 思路：Notion 提供内容录入体验，Next.js 提供前台性能、SEO 和扩展能力。这样既保留了写作效率，也避免把博客绑定在单一平台模板上。
-        </p>
-      </div>
-      <div className="card-grid">
+    <Surface as="section" className="grid gap-7 p-5 sm:p-7">
+      <PageIntro
+        eyebrow="About This Build"
+        title="关于这套博客架构"
+        description="这个项目采用典型的 Headless CMS 思路：Notion 提供内容录入体验，Next.js 提供前台性能、SEO 和扩展能力。这样既保留了写作效率，也避免把博客绑定在单一平台模板上。"
+      />
+      <div className="grid gap-[18px] lg:grid-cols-2">
         {points.map((point) => (
-          <article key={point} className="info-card">
-            <p>{point}</p>
-          </article>
+          <Surface key={point} as="article" className="p-[22px]">
+            <p className="leading-8">{point}</p>
+          </Surface>
         ))}
       </div>
-    </section>
+    </Surface>
   );
 }

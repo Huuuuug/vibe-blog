@@ -1,29 +1,54 @@
-﻿import Link from "next/link";
+﻿"use client";
+
+import dynamic from "next/dynamic";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { Logo } from "@/components/logo";
+import { RadioGroup, type RadioGroupItem } from "@/components/radio-group";
 import { siteConfig } from "@/lib/site-config";
 
-const links = [
-  { href: "/", label: "Home" },
-  { href: "/blog", label: "Blog" },
-  { href: "/about", label: "About" },
+const ThemeToggle = dynamic(
+  () => import("@/components/theme-toggle").then((mod) => mod.ThemeToggle),
+  { ssr: false },
+);
+
+const navItems: RadioGroupItem[] = [
+  { label: "首页", value: "" },
+  { label: "文章", value: "blog" },
+  { label: "关于", value: "about" },
 ];
 
 export function SiteHeader() {
+  const router = useRouter();
+  const pathname = usePathname() ?? "/";
+  const currentValue =
+    pathname === "/"
+      ? ""
+      : pathname.startsWith("/blog") || pathname.startsWith("/tags")
+        ? "blog"
+        : pathname.startsWith("/about")
+          ? "about"
+          : "";
+
   return (
-    <header className="site-header">
-      <Link className="brand-mark" href="/">
-        <span className="brand-badge">V</span>
-        <span className="brand-copy">
-          <span className="brand-title">{siteConfig.name}</span>
-          <span className="brand-subtitle">Next.js + Notion Blog</span>
-        </span>
-      </Link>
-      <nav className="site-nav" aria-label="Primary">
-        {links.map((link) => (
-          <Link key={link.href} href={link.href}>
-            {link.label}
+    <header className="sticky top-0 z-10 w-full">
+      <div className="grid w-full gap-4  bg-[var(--card-strong)] px-5 py-[14px] backdrop-blur-[16px] sm:px-6 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-center lg:px-8">
+        <div className="flex min-w-0 justify-start">
+          <Link className="inline-flex min-w-0 items-center gap-3" href="/" aria-label={siteConfig.name}>
+            <Logo className="size-12 shrink-0 stroke-[var(--foreground)] stroke-[2.75]" />
           </Link>
-        ))}
-      </nav>
+        </div>
+        <div className="flex justify-start lg:justify-center">
+          <RadioGroup
+            items={navItems}
+            value={currentValue}
+            onChange={(value) => router.push(value ? `/${value}` : "/")}
+          />
+        </div>
+        <div className="flex min-h-[42px] justify-start lg:justify-end">
+          <ThemeToggle />
+        </div>
+      </div>
     </header>
   );
 }

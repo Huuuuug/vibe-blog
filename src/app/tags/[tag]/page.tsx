@@ -1,5 +1,7 @@
 ﻿import type { Metadata } from "next";
+import { PageIntro } from "@/components/page-intro";
 import { PostCard } from "@/components/post-card";
+import { Surface } from "@/components/surface";
 import { getPostsByTag, getPublishedPosts } from "@/lib/notion/queries";
 
 export async function generateStaticParams() {
@@ -26,20 +28,21 @@ export default async function TagPage({
   params: Promise<{ tag: string }>;
 }) {
   const { tag } = await params;
-  const posts = await getPostsByTag(decodeURIComponent(tag));
+  const decodedTag = decodeURIComponent(tag);
+  const posts = await getPostsByTag(decodedTag);
 
   return (
-    <section className="space-y-8">
-      <div className="space-y-4">
-        <span className="eyebrow">Tag</span>
-        <h1 className="page-title">#{decodeURIComponent(tag)}</h1>
-        <p className="page-copy">按标签聚合文章，便于后续扩展专题页或系列内容。</p>
-      </div>
-      <div className="grid gap-5">
+    <Surface as="section" className="grid gap-7 p-5 sm:p-7">
+      <PageIntro
+        eyebrow="Tag"
+        title={`#${decodedTag}`}
+        description="按标签聚合文章，便于后续扩展专题页或系列内容。"
+      />
+      <div className="grid gap-[18px]">
         {posts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
       </div>
-    </section>
+    </Surface>
   );
 }

@@ -1,3 +1,4 @@
+﻿import type { NotionSchema } from "@/lib/notion/client";
 import type { FallbackContentBlock, NotionBlock, PostDetail, PostMeta } from "@/lib/notion/types";
 
 type RichTextItem = {
@@ -19,6 +20,7 @@ type NotionPropertyValue = {
   date?: { start: string | null } | null;
   checkbox?: boolean;
   files?: NotionFile[];
+  url?: string | null;
   type?: string;
 };
 
@@ -35,33 +37,92 @@ type NotionBlockResponse = {
   [key: string]: unknown;
 };
 
+function findPropertyByType(properties: NotionPropertyMap, types: string[]) {
+  return Object.entries(properties).find(([, property]) => property?.type && types.includes(property.type));
+}
+
+function getConfiguredProperty(properties: NotionPropertyMap, propertyName: string) {
+  if (!propertyName) {
+    return undefined;
+  }
+
+  return properties[propertyName];
+}
+
 function getPlainText(field?: RichTextItem[]) {
   return field?.map((item) => item.plain_text ?? "").join("") ?? "";
+}
+
+function getTextValue(property?: NotionPropertyValue) {
+  if (!property) {
+    return "";
+  }
+
+  return getPlainText(property.title) || getPlainText(property.rich_text) || property.url || "";
+}
+
+function getStatusLikeValue(property?: NotionPropertyValue) {
+  return property?.status?.name ?? property?.select?.name ?? (getTextValue(property) || null);
 }
 
 function getFileUrl(property?: NotionPropertyValue): string | null {
   const file = property?.files?.[0];
   if (!file) {
-    return null;
+    return property?.url ?? null;
   }
 
   return file.type === "external" ? file.external?.url ?? null : file.file?.url ?? null;
 }
 
-export function mapDatabasePageToPost(page: NotionPage): PostMeta {
+function getPropertyWithFallback(
+  properties: NotionPropertyMap,
+  propertyName: string,
+  fallbackTypes: string[] = [],
+) {
+  return getConfiguredProperty(properties, propertyName) ?? findPropertyByType(properties, fallbackTypes)?.[1];
+}
+
+function slugify(input: string) {
+  return input
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 96);
+}
+
+export function mapDatabasePageToPost(page: NotionPage, schema: NotionSchema): PostMeta {
   const properties = page.properties;
+  const titleProperty = getPropertyWithFallback(properties, schema.titleProperty, ["title"]);
+  const title = getTextValue(titleProperty) || "Untitled";
+  const slugProperty = getPropertyWithFallback(properties, schema.slugProperty, ["rich_text"]);
+  const summaryProperty = getConfiguredProperty(properties, schema.summaryProperty);
+  const publishedAtProperty = getPropertyWithFallback(properties, schema.publishedAtProperty, ["date"]);
+  const tagsProperty = getConfiguredProperty(properties, schema.tagsProperty);
+  const categoryProperty = getConfiguredProperty(properties, schema.categoryProperty);
+  const coverProperty = getPropertyWithFallback(properties, schema.coverProperty, ["files", "url"]);
+  const featuredProperty = getConfiguredProperty(properties, schema.featuredProperty);
 
   return {
     id: page.id,
-    title: getPlainText(properties.Title?.title) || "Untitled",
-    slug: getPlainText(properties.Slug?.rich_text) || page.id,
-    summary: getPlainText(properties.Summary?.rich_text),
-    publishedAt: properties.PublishedAt?.date?.start ?? null,
-    tags: properties.Tags?.multi_select?.map((tag) => tag.name) ?? [],
-    category: properties.Category?.select?.name ?? properties.Category?.status?.name ?? null,
-    cover: getFileUrl(properties.Cover),
-    featured: properties.Featured?.checkbox ?? false,
+    title,
+    slug: getTextValue(slugProperty) || slugify(title) || page.id,
+    summary: getTextValue(summaryProperty),
+    publishedAt: publishedAtProperty?.date?.start ?? null,
+    tags: tagsProperty?.multi_select?.map((tag) => tag.name) ?? [],
+    category: getStatusLikeValue(categoryProperty),
+    cover: getFileUrl(coverProperty),
+    featured: featuredProperty?.checkbox ?? false,
   };
+}
+
+export function getPageStatus(page: NotionPage, schema: NotionSchema) {
+  const configured = getConfiguredProperty(page.properties, schema.statusProperty);
+  return getStatusLikeValue(configured);
+}
+
+export function hasConfiguredStatusProperty(page: NotionPage, schema: NotionSchema) {
+  return Boolean(getConfiguredProperty(page.properties, schema.statusProperty));
 }
 
 export function mapBlocksToPlainText(blocks: NotionBlockResponse[]): NotionBlock[] {
@@ -99,3 +160,4 @@ export function mergePostWithFallback(post: PostMeta, content: FallbackContentBl
     content,
   };
 }
+
