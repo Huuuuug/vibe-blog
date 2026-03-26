@@ -33,6 +33,7 @@ type BlockListResponse = {
 
 let lastSuccessfulPages: QueryPageResponse[] | null = null;
 const lastSuccessfulBlocks = new Map<string, Array<Record<string, unknown>>>();
+let resolvedDataSourceIdCache: string | null = null;
 
 function sortPosts(posts: PostMeta[]) {
   return [...posts].sort((a, b) => {
@@ -95,6 +96,30 @@ function isRetryableError(error: unknown) {
   return typeof record.body === "string" && record.body.includes("rate_limited");
 }
 
+function shouldTryDatabaseResolution(error: unknown) {
+  if (typeof error !== "object" || error === null) {
+    return false;
+  }
+
+  const record = error as {
+    code?: string;
+    status?: number;
+    body?: string;
+    message?: string;
+  };
+
+  const code = record.code ?? "";
+  const body = typeof record.body === "string" ? record.body : "";
+  const message = typeof record.message === "string" ? record.message : "";
+  const content = `${body} ${message}`.toLowerCase();
+
+  if (code === "validation_error" || code === "object_not_found") {
+    return true;
+  }
+
+  return content.includes("data source") || content.includes("data_source") || content.includes("database");
+}
+
 async function withRetry<T>(label: string, task: () => Promise<T>) {
   let lastError: unknown;
 
@@ -117,6 +142,40 @@ async function withRetry<T>(label: string, task: () => Promise<T>) {
   throw lastError;
 }
 
+async function resolveDataSourceId(
+  notion: NonNullable<ReturnType<typeof getNotionClient>>,
+  configuredId: string,
+) {
+  if (resolvedDataSourceIdCache && resolvedDataSourceIdCache === configuredId) {
+    return configuredId;
+  }
+
+  try {
+    await notion.dataSources.retrieve({ data_source_id: configuredId });
+    resolvedDataSourceIdCache = configuredId;
+    return configuredId;
+  } catch (error) {
+    if (!shouldTryDatabaseResolution(error)) {
+      throw error;
+    }
+  }
+
+  const database = (await withRetry("Retrieving database to resolve data source id", () =>
+    notion.databases.retrieve({ database_id: configuredId }),
+  )) as { data_sources?: Array<{ id?: string }> };
+
+  const resolved = database.data_sources?.[0]?.id?.trim();
+  if (!resolved) {
+    throw new Error(
+      "NOTION_DATA_SOURCE_ID is invalid. This integration can read the database but no data source id was found. Open the database as full page and copy the data source id from the URL or Notion API response.",
+    );
+  }
+
+  console.warn(`[notion] Resolved database id to data source id: ${configuredId} -> ${resolved}`);
+  resolvedDataSourceIdCache = resolved;
+  return resolved;
+}
+
 const queryAllPages = cache(async () => {
   const notion = getNotionClient();
   const dataSourceId = getNotionDataSourceId();
@@ -127,12 +186,13 @@ const queryAllPages = cache(async () => {
 
   const pages: QueryPageResponse[] = [];
   let nextCursor: string | undefined;
+  const resolvedDataSourceId = await resolveDataSourceId(notion, dataSourceId);
 
   try {
     do {
       const response = (await withRetry("Querying data source", () =>
         notion.dataSources.query({
-          data_source_id: dataSourceId,
+          data_source_id: resolvedDataSourceId,
           page_size: 100,
           start_cursor: nextCursor,
         }),
