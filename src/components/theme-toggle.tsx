@@ -1,12 +1,12 @@
 ﻿"use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactElement } from "react";
 import { THEME_STORAGE_KEY, type ThemePreference, applyTheme } from "@/lib/theme";
 
 type ThemeOption = {
   label: string;
   value: ThemePreference;
-  icon: JSX.Element;
+  icon: ReactElement;
 };
 
 const iconClassName = "size-4.5";
@@ -153,5 +153,6 @@ export function ThemeToggle() {
     </div>
   );
 }
+
 
 
