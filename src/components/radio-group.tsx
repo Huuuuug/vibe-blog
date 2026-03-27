@@ -11,7 +11,7 @@ export interface RadioGroupProps {
   onChange?: (value: string) => void;
 }
 
-export  function RadioGroup(props: RadioGroupProps) {
+export function RadioGroup(props: RadioGroupProps) {
   const { value, items, onChange } = props;
 
   const radioContainerRef = useRef<HTMLDivElement>(null);
@@ -23,7 +23,6 @@ export  function RadioGroup(props: RadioGroupProps) {
     left: 0,
   });
 
-  // 根据 value 定位滑块
   const updateSliderPosition = useCallback(
     (val: string) => {
       const idx = items.findIndex((item) => item.value === val);
@@ -50,7 +49,6 @@ export  function RadioGroup(props: RadioGroupProps) {
     if (onChange) onChange(val);
   };
 
-  // 初始化滑块位置
   useEffect(() => {
     updateSliderPosition(value);
   }, [value, items, updateSliderPosition]);
@@ -82,13 +80,13 @@ export  function RadioGroup(props: RadioGroupProps) {
   return (
     <div
       ref={radioContainerRef}
-      className="relative flex items-center justify-center rounded-3xl border-2 border-solid border-[#30363d] overflow-hidden"
+      className="relative flex items-center justify-center overflow-hidden rounded-3xl border-2 border-[var(--border-strong)] bg-[var(--card)] text-[color:var(--foreground)]/72"
     >
       {items.map((item) => (
         <div
           key={item.value}
           onClick={() => onRadioItemClick(item.value)}
-          className="cursor-pointer flex items-center justify-center px-6 py-1.5"
+          className="flex cursor-pointer items-center justify-center px-6 py-1.5 transition-colors duration-150 hover:text-foreground"
         >
           {item.label}
         </div>
@@ -100,11 +98,11 @@ export  function RadioGroup(props: RadioGroupProps) {
           height: currentRadioItemOptions.height,
           transform: `translate(${currentRadioItemOptions.left}px, 0)`,
         }}
-        className="mix-blend-difference pointer-events-none absolute left-0 top-0.75 duration-300 ease-in-out"
+        className="pointer-events-none absolute left-0 top-0.75 mix-blend-difference duration-300 ease-in-out"
       >
         <div
           ref={innerButtonRef}
-          className="h-full w-full rounded-[50px] bg-[#30363d]"
+          className="h-full w-full rounded-[50px] bg-foreground"
         ></div>
       </div>
     </div>
