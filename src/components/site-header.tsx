@@ -15,7 +15,7 @@ const ThemeToggle = dynamic(
 const navItems: RadioGroupItem[] = [
   { label: "首页", value: "" },
   { label: "文章", value: "blog" },
-  { label: "关于", value: "about" },
+  { label: "项目", value: "about" },
 ];
 
 export function SiteHeader() {
@@ -52,3 +52,4 @@ export function SiteHeader() {
     </header>
   );
 }
+

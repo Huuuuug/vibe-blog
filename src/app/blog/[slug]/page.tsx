@@ -116,7 +116,7 @@ export default async function PostDetailPage({
 
   return (
     <article className="relative -mt-3 mx-auto max-w-[920px] md:-mt-5 lg:-mt-[112px]">
-      <FloatingOutline outline={outline} />`r`n      <BackToTopButton />
+      <FloatingOutline outline={outline} />     <BackToTopButton />
 
       <div className="grid gap-6 lg:-translate-x-[44px]">
         <div className="mx-auto grid w-full max-w-[760px] gap-6 rounded-[32px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-strong),var(--card))] px-6 py-7 shadow-[var(--shadow)] backdrop-blur-[10px] sm:px-10 sm:py-10">
