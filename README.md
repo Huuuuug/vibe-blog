@@ -29,6 +29,7 @@ npm run dev
 ## 推荐的 Notion 字段
 
 - `Title` `title`
+- `SubTitle` `rich_text`
 - `Slug` `rich_text`
 - `Status` `status`
 - `PublishedAt` `date`

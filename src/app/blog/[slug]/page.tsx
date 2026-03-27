@@ -84,7 +84,7 @@ export default async function PostDetailPage({
   const outline = post.blocks.length > 0 ? getOutlineFromBlocks(post.blocks) : getOutlineFromFallback(post.content);
 
   return (
-    <article className="mx-auto grid max-w-[1240px] gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
+    <article className="-mt-3 mx-auto grid max-w-[1240px] gap-8 md:-mt-5 lg:-mt-[112px] lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
       <div className="grid gap-6">
         <div className="grid gap-4 rounded-[32px] border border-[var(--border)] bg-[var(--card)] px-6 py-7 shadow-[var(--shadow)] backdrop-blur-[10px] sm:px-10 sm:py-9">
           <Link href="/blog">
@@ -149,3 +149,7 @@ export default async function PostDetailPage({
     </article>
   );
 }
+
+
+
+

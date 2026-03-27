@@ -95,6 +95,7 @@ export function mapDatabasePageToPost(page: NotionPage, schema: NotionSchema): P
   const properties = page.properties;
   const titleProperty = getPropertyWithFallback(properties, schema.titleProperty, ["title"]);
   const title = getTextValue(titleProperty) || "Untitled";
+  const subtitleProperty = getConfiguredProperty(properties, schema.subtitleProperty);
   const slugProperty = getPropertyWithFallback(properties, schema.slugProperty, ["rich_text"]);
   const summaryProperty = getConfiguredProperty(properties, schema.summaryProperty);
   const publishedAtProperty = getPropertyWithFallback(properties, schema.publishedAtProperty, ["date"]);
@@ -106,6 +107,7 @@ export function mapDatabasePageToPost(page: NotionPage, schema: NotionSchema): P
   return {
     id: page.id,
     title,
+    subtitle: getTextValue(subtitleProperty),
     slug: getTextValue(slugProperty) || slugify(title) || page.id,
     summary: getTextValue(summaryProperty),
     publishedAt: publishedAtProperty?.date?.start ?? null,
@@ -160,4 +162,3 @@ export function mergePostWithFallback(post: PostMeta, content: FallbackContentBl
     content,
   };
 }
-

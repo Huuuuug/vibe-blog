@@ -1,6 +1,7 @@
 ﻿export type PostMeta = {
   id: string;
   title: string;
+  subtitle: string;
   slug: string;
   summary: string;
   publishedAt: string | null;

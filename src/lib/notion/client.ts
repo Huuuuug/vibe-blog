@@ -3,6 +3,7 @@
 export type NotionSchema = {
   dataSourceId: string | null;
   titleProperty: string;
+  subtitleProperty: string;
   slugProperty: string;
   summaryProperty: string;
   publishedAtProperty: string;
@@ -36,6 +37,7 @@ export function getNotionSchema(): NotionSchema {
   return {
     dataSourceId: process.env.NOTION_DATA_SOURCE_ID?.trim() || null,
     titleProperty: readEnv("NOTION_TITLE_PROPERTY", "Title"),
+    subtitleProperty: readEnv("NOTION_SUBTITLE_PROPERTY", "SubTitle"),
     slugProperty: readEnv("NOTION_SLUG_PROPERTY", "Slug"),
     summaryProperty: readEnv("NOTION_SUMMARY_PROPERTY", "Summary"),
     publishedAtProperty: readEnv("NOTION_PUBLISHED_AT_PROPERTY", "PublishedAt"),
