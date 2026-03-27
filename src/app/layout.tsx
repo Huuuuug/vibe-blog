@@ -2,7 +2,6 @@
 import { Fraunces, JetBrains_Mono, Manrope } from "next/font/google";
 import "./globals.css";
 import { Plum } from "@/components/plum";
-import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { siteConfig } from "@/lib/site-config";
 import { THEME_STORAGE_KEY } from "@/lib/theme";
@@ -81,9 +80,9 @@ export default function RootLayout({
           <main className="mx-auto w-[min(1120px,calc(100vw-20px))] px-0 pb-[72px] pt-5 md:w-[min(1120px,calc(100vw-32px))] md:pt-7 lg:pt-[148px]">
             {children}
           </main>
-          <SiteFooter />
         </div>
       </body>
     </html>
   );
 }
+
