@@ -1,6 +1,6 @@
 ﻿import type { Metadata } from "next";
 import Link from "next/link";
-import { Eyebrow } from "@/components/eyebrow";
+import { BackToTopButton } from "@/components/back-to-top-button";
 import { NotionRenderer } from "@/components/notion-renderer";
 import { getPostBySlug, getPublishedPosts } from "@/lib/notion/queries";
 import { notFound } from "next/navigation";
@@ -8,7 +8,6 @@ import { Surface } from "@/components/surface";
 import { formatDisplayDate } from "@/lib/utils/date";
 import { slugifyHeading } from "@/lib/utils/slug";
 import type { FallbackContentBlock, NotionBlock } from "@/lib/notion/types";
-
 export async function generateStaticParams() {
   const posts = await getPublishedPosts();
   return posts.map((post) => ({ slug: post.slug }));
@@ -69,6 +68,38 @@ function getOutlineFromBlocks(blocks: NotionBlock[] = []): OutlineItem[] {
     }));
 }
 
+function FloatingOutline({ outline }: { outline: OutlineItem[] }) {
+  if (outline.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="pointer-events-none fixed left-[20px] top-[168px] z-30 hidden h-[min(72vh,680px)] w-[88px] lg:block">
+      <div className="group/outline pointer-events-auto relative h-full w-full">
+        <Surface
+          as="section"
+          className="absolute left-0 top-0 h-full w-[300px] overflow-y-auto p-3 opacity-0 -translate-x-4 transition duration-250 ease-out pointer-events-none group-hover/outline:pointer-events-auto group-hover/outline:translate-x-0 group-hover/outline:opacity-100 group-focus-within/outline:pointer-events-auto group-focus-within/outline:translate-x-0 group-focus-within/outline:opacity-100"
+        >
+          <nav className="grid gap-1.5">
+            {outline.map((item) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                className={[
+                  "rounded-[12px] px-3 py-2 text-[0.82rem] leading-5 text-[color:var(--foreground)]/70 transition-colors duration-150 hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]",
+                  item.depth === 3 ? "ml-3 text-[color:var(--foreground)]/58" : "font-semibold text-foreground",
+                ].join(" ")}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </Surface>
+      </div>
+    </div>
+  );
+}
+
 export default async function PostDetailPage({
   params,
 }: {
@@ -84,24 +115,29 @@ export default async function PostDetailPage({
   const outline = post.blocks.length > 0 ? getOutlineFromBlocks(post.blocks) : getOutlineFromFallback(post.content);
 
   return (
-    <article className="-mt-3 mx-auto grid max-w-[1240px] gap-8 md:-mt-5 lg:-mt-[112px] lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
-      <div className="grid gap-6">
-        <div className="grid gap-4 rounded-[32px] border border-[var(--border)] bg-[var(--card)] px-6 py-7 shadow-[var(--shadow)] backdrop-blur-[10px] sm:px-10 sm:py-9">
-          <Link href="/blog">
-            <Eyebrow>Back to Blog</Eyebrow>
-          </Link>
-          <div className="flex flex-wrap items-center gap-2 text-[0.72rem] uppercase tracking-[0.12em] text-[var(--muted)]">
-            {post.category ? <span>{post.category}</span> : null}
-            <span>{formatDisplayDate(post.publishedAt)}</span>
-          </div>
-          <div className="grid gap-3 border-b border-[var(--border)] pb-8">
-            <h1 className="m-0 max-w-[18ch] font-[var(--font-heading)] text-[clamp(1.9rem,3.8vw,3.2rem)] leading-[1.01] tracking-[-0.04em]">
+    <article className="relative -mt-3 mx-auto max-w-[920px] md:-mt-5 lg:-mt-[112px]">
+      <FloatingOutline outline={outline} />`r`n      <BackToTopButton />
+
+      <div className="grid gap-6 lg:-translate-x-[44px]">
+        <div className="mx-auto grid w-full max-w-[760px] gap-6 rounded-[32px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-strong),var(--card))] px-6 py-7 shadow-[var(--shadow)] backdrop-blur-[10px] sm:px-10 sm:py-10">
+          <div className="grid gap-3 border-b border-[var(--border)] pb-6">
+            <h1 className="m-0 max-w-[18ch] font-[var(--font-heading)] text-[clamp(2.1rem,4vw,3.45rem)] leading-[0.98] tracking-[-0.045em]">
               {post.title}
             </h1>
-            <p className="max-w-[56ch] text-[0.94rem] leading-[1.75] text-[color:var(--foreground)]/72">
+            <div className="flex flex-wrap items-center gap-2 text-[0.74rem] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+              <span>{formatDisplayDate(post.publishedAt)}</span>
+              {post.category ? (
+                <>
+                  <span className="text-[color:var(--foreground)]/22">/</span>
+                  <span>{post.category}</span>
+                </>
+              ) : null}
+            </div>
+            <p className="max-w-[54ch] text-[1rem] leading-[1.82] text-[color:var(--foreground)]/72">
               {post.summary}
             </p>
           </div>
+
           <div className="flex flex-wrap gap-2">
             {post.tags.map((tag) => (
               <Link
@@ -116,40 +152,18 @@ export default async function PostDetailPage({
         </div>
 
         <NotionRenderer blocks={post.blocks} fallbackMarkdown={post.content ?? []} />
-      </div>
 
-      <aside className="lg:sticky lg:top-24">
-        <Surface as="section" className="grid gap-5 p-5 sm:p-6">
-          <div className="grid gap-2">
-            <p className="text-[0.7rem] font-bold uppercase tracking-[0.14em] text-[var(--muted)]">导读</p>
-            <p className="text-[0.86rem] leading-6 text-[color:var(--foreground)]/72">
-              参考 mmeme 的编排方式，把标题、摘要、元信息和目录先放在阅读入口，正文区域保持更聚焦的单列宽度。
-            </p>
-          </div>
-          <div className="grid gap-3 border-t border-[var(--border)] pt-5">
-            <p className="text-[0.7rem] font-bold uppercase tracking-[0.14em] text-[var(--muted)]">目录</p>
-            {outline.length > 0 ? (
-              <nav className="grid gap-2">
-                {outline.map((item) => (
-                  <a
-                    key={item.id}
-                    href={`#${item.id}`}
-                    className={`text-[0.86rem] leading-6 text-[color:var(--foreground)]/72 transition-colors hover:text-[var(--accent)] ${item.depth === 3 ? "pl-4" : "pl-0 font-semibold text-foreground"}`}
-                  >
-                    {item.label}
-                  </a>
-                ))}
-              </nav>
-            ) : (
-              <p className="text-[0.86rem] leading-6 text-[var(--muted)]">当前文章没有可提取的章节标题。</p>
-            )}
-          </div>
-        </Surface>
-      </aside>
+        <div className="mx-auto flex w-full max-w-[760px] justify-end">
+          <Link
+            href="/blog"
+            className="inline-flex items-center rounded-full border border-[var(--border-strong)] px-4 py-2 text-[0.8rem] font-semibold uppercase tracking-[0.12em] text-[color:var(--foreground)]/72 transition-colors duration-150 hover:border-[var(--accent)] hover:text-[var(--accent)]"
+          >
+            Back to Blog
+          </Link>
+        </div>
+      </div>
     </article>
   );
 }
-
-
 
 
