@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PostCard } from "@/components/features/blog";
 import { PageIntro } from "@/components/shared";
-import { Surface } from "@/components/ui";
+import { Surface } from "@/components/ui/surface/surface";
 import { getPostsByTag, getPublishedPosts } from "@/lib/notion/queries";
 
 export async function generateStaticParams() {

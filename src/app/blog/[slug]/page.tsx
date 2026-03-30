@@ -4,7 +4,7 @@ import { NotionRenderer } from "@/components/features/blog";
 import { BackToTopButton } from "@/components/layout";
 import { getPostBySlug, getPublishedPosts } from "@/lib/notion/queries";
 import { notFound } from "next/navigation";
-import { Surface } from "@/components/ui";
+import { Surface } from "@/components/ui/surface/surface";
 import { formatDisplayDate } from "@/lib/utils/date";
 import { slugifyHeading } from "@/lib/utils/slug";
 import type { FallbackContentBlock, NotionBlock } from "@/lib/notion/types";
@@ -165,5 +165,3 @@ export default async function PostDetailPage({
     </article>
   );
 }
-
-

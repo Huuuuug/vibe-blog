@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/layout";
-import { RadioGroup, type RadioGroupItem } from "@/components/ui";
+import { RadioGroup, type RadioGroupItem } from "@/components/ui/radio-group/radio-group";
 import { siteConfig } from "@/lib/site-config";
 
 const ThemeToggle = dynamic(
