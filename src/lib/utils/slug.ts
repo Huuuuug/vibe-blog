@@ -7,3 +7,17 @@
     .replace(/^-|-$/g, "")
     .slice(0, 96);
 }
+
+export function normalizeSlug(input: string) {
+  const value = input.trim();
+
+  if (!value) {
+    return "";
+  }
+
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}

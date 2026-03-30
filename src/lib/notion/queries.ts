@@ -1,6 +1,7 @@
 ﻿import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { getNotionClient, getNotionDataSourceId, getNotionSchema, hasNotionEnv } from "@/lib/notion/client";
+import { normalizeSlug } from "@/lib/utils/slug";
 import {
   getPageStatus,
   hasConfiguredStatusProperty,
@@ -307,10 +308,11 @@ const getPostBySlugCached = cache(async (slug: string): Promise<PostDetail | nul
 });
 
 export async function getPostBySlug(slug: string): Promise<PostDetail | null> {
-  return getPostBySlugCached(slug);
+  return getPostBySlugCached(normalizeSlug(slug));
 }
 
 export async function getPostsByTag(tag: string) {
   const posts = await getPublishedPosts();
   return posts.filter((post) => post.tags.includes(tag));
 }
+
