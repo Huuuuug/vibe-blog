@@ -1,8 +1,9 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { Fraunces, JetBrains_Mono, Manrope } from "next/font/google";
+import Script from "next/script";
+import "@/components/ui/styles/base.css";
 import "./globals.css";
-import { Plum } from "@/components/plum";
-import { SiteHeader } from "@/components/site-header";
+import { Plum, SiteHeader } from "@/components/layout";
 import { siteConfig } from "@/lib/site-config";
 import { THEME_STORAGE_KEY } from "@/lib/theme";
 
@@ -71,7 +72,9 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeInitScript}
+        </Script>
       </head>
       <body className="min-h-screen overflow-x-hidden bg-background text-foreground">
         <Plum />
@@ -85,4 +88,3 @@ export default function RootLayout({
     </html>
   );
 }
-

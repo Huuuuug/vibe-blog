@@ -1,0 +1,74 @@
+:root {
+  --ui-tone-ivory-50: #fbf7f1;
+  --ui-tone-ivory-100: #f6f1e8;
+  --ui-tone-ink-900: #1c2421;
+  --ui-tone-ink-700: #66716a;
+  --ui-tone-teal-600: #1f6b5d;
+  --ui-tone-teal-100: rgba(31, 107, 93, 0.1);
+
+  --ui-color-background: var(--ui-tone-ivory-100);
+  --ui-color-foreground: var(--ui-tone-ink-900);
+  --ui-color-muted: var(--ui-tone-ink-700);
+  --ui-color-card: rgba(255, 251, 246, 0.8);
+  --ui-color-card-strong: rgba(255, 250, 244, 0.92);
+  --ui-color-border: rgba(28, 36, 33, 0.1);
+  --ui-color-border-strong: rgba(28, 36, 33, 0.16);
+  --ui-color-accent: var(--ui-tone-teal-600);
+  --ui-color-accent-soft: var(--ui-tone-teal-100);
+
+  --ui-shadow-surface: 0 22px 60px rgba(58, 49, 40, 0.08);
+  --ui-shadow-floating: 0 18px 36px rgba(31, 42, 38, 0.16);
+
+  --ui-radius-surface: 22px;
+  --ui-radius-surface-lg: 28px;
+  --ui-radius-pill: 999px;
+
+  /* Backward-compatible project aliases */
+  --background: var(--ui-color-background);
+  --foreground: var(--ui-color-foreground);
+  --muted: var(--ui-color-muted);
+  --card: var(--ui-color-card);
+  --card-strong: var(--ui-color-card-strong);
+  --border: var(--ui-color-border);
+  --border-strong: var(--ui-color-border-strong);
+  --accent: var(--ui-color-accent);
+  --accent-soft: var(--ui-color-accent-soft);
+  --shadow: var(--ui-shadow-surface);
+}
+
+:root[data-theme="dark"] {
+  --ui-color-background: #0f1513;
+  --ui-color-foreground: #edf3ef;
+  --ui-color-muted: #8f9d96;
+  --ui-color-card: rgba(20, 27, 25, 0.8);
+  --ui-color-card-strong: rgba(15, 22, 20, 0.92);
+  --ui-color-border: rgba(161, 180, 171, 0.16);
+  --ui-color-border-strong: rgba(161, 180, 171, 0.24);
+  --ui-color-accent: #7ac7aa;
+  --ui-color-accent-soft: rgba(122, 199, 170, 0.14);
+
+  --ui-shadow-surface: 0 22px 60px rgba(0, 0, 0, 0.3);
+  --ui-shadow-floating: 0 18px 36px rgba(0, 0, 0, 0.28);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-card: var(--card);
+  --color-card-strong: var(--card-strong);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+
+  --color-ui-background: var(--ui-color-background);
+  --color-ui-foreground: var(--ui-color-foreground);
+  --color-ui-muted: var(--ui-color-muted);
+  --color-ui-card: var(--ui-color-card);
+  --color-ui-card-strong: var(--ui-color-card-strong);
+  --color-ui-border: var(--ui-color-border);
+  --color-ui-border-strong: var(--ui-color-border-strong);
+  --color-ui-accent: var(--ui-color-accent);
+  --color-ui-accent-soft: var(--ui-color-accent-soft);
+}

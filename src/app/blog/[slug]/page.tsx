@@ -1,10 +1,10 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { BackToTopButton } from "@/components/back-to-top-button";
-import { NotionRenderer } from "@/components/notion-renderer";
+import { NotionRenderer } from "@/components/features/blog";
+import { BackToTopButton } from "@/components/layout";
 import { getPostBySlug, getPublishedPosts } from "@/lib/notion/queries";
 import { notFound } from "next/navigation";
-import { Surface } from "@/components/surface";
+import { Surface } from "@/components/ui";
 import { formatDisplayDate } from "@/lib/utils/date";
 import { slugifyHeading } from "@/lib/utils/slug";
 import type { FallbackContentBlock, NotionBlock } from "@/lib/notion/types";

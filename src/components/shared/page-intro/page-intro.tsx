@@ -1,4 +1,4 @@
-﻿import { Eyebrow } from "@/components/eyebrow";
+import { Eyebrow } from "@/components/shared";
 
 type PageIntroProps = {
   eyebrow: React.ReactNode;

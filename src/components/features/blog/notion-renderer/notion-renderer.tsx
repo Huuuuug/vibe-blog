@@ -1,4 +1,4 @@
-﻿import { Prose } from "@/components/prose";
+import { Prose } from "@/components/shared";
 import type { FallbackContentBlock, NotionBlock } from "@/lib/notion/types";
 import { slugifyHeading } from "@/lib/utils/slug";
 

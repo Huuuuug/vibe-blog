@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { useEffect, useRef, useState, type ReactElement } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactElement } from "react";
 import { THEME_STORAGE_KEY, type ThemePreference, applyTheme } from "@/lib/theme";
 
 type ThemeOption = {
@@ -10,6 +10,7 @@ type ThemeOption = {
 };
 
 const iconClassName = "size-4.5";
+const THEME_PREFERENCE_EVENT = "theme-preference-change";
 
 const options: ThemeOption[] = [
   {
@@ -43,7 +44,7 @@ const options: ThemeOption[] = [
   },
 ];
 
-function getInitialTheme(): ThemePreference {
+function getThemePreferenceSnapshot(): ThemePreference {
   if (typeof window === "undefined") {
     return "system";
   }
@@ -52,8 +53,40 @@ function getInitialTheme(): ThemePreference {
   return stored === "light" || stored === "dark" || stored === "system" ? stored : "system";
 }
 
+function getServerThemePreferenceSnapshot(): ThemePreference {
+  return "system";
+}
+
+function subscribeToThemePreference(onStoreChange: () => void) {
+  if (typeof window === "undefined") {
+    return () => {};
+  }
+
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === THEME_STORAGE_KEY) {
+      onStoreChange();
+    }
+  };
+
+  const onPreferenceChange = () => {
+    onStoreChange();
+  };
+
+  window.addEventListener("storage", onStorage);
+  window.addEventListener(THEME_PREFERENCE_EVENT, onPreferenceChange);
+
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener(THEME_PREFERENCE_EVENT, onPreferenceChange);
+  };
+}
+
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<ThemePreference>(getInitialTheme);
+  const theme = useSyncExternalStore(
+    subscribeToThemePreference,
+    getThemePreferenceSnapshot,
+    getServerThemePreferenceSnapshot,
+  );
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
@@ -98,8 +131,8 @@ export function ThemeToggle() {
   }, [open]);
 
   const updateTheme = (nextTheme: ThemePreference) => {
-    setTheme(nextTheme);
     window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+    window.dispatchEvent(new Event(THEME_PREFERENCE_EVENT));
     applyTheme(nextTheme);
     setOpen(false);
   };
@@ -124,7 +157,7 @@ export function ThemeToggle() {
       </button>
 
       {open ? (
-        <div className="absolute right-0 top-[calc(100%+8px)] z-20 grid gap-1 min-w-[112px] rounded-[20px] border border-[var(--border-strong)] bg-[var(--card-strong)] p-1.5 shadow-[0_18px_36px_rgba(31,42,38,0.16)] backdrop-blur-[16px]">
+        <div className="absolute right-0 top-[calc(100%+8px)] z-20 grid min-w-[112px] gap-1 rounded-[20px] border border-[var(--border-strong)] bg-[var(--card-strong)] p-1.5 shadow-[0_18px_36px_rgba(31,42,38,0.16)] backdrop-blur-[16px]">
           {options.map((option) => {
             const active = option.value === theme;
 
@@ -153,6 +186,3 @@ export function ThemeToggle() {
     </div>
   );
 }
-
-
-

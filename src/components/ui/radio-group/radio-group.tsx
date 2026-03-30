@@ -1,4 +1,5 @@
-﻿import { useEffect, useRef, useCallback, useState } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
+import { cn } from "@/components/ui/lib/cn";
 
 export interface RadioGroupItem {
   label: string;
@@ -9,10 +10,11 @@ export interface RadioGroupProps {
   value: string;
   items: RadioGroupItem[];
   onChange?: (value: string) => void;
+  className?: string;
 }
 
 export function RadioGroup(props: RadioGroupProps) {
-  const { value, items, onChange } = props;
+  const { value, items, onChange, className } = props;
 
   const radioContainerRef = useRef<HTMLDivElement>(null);
   const innerButtonRef = useRef<HTMLDivElement>(null);
@@ -54,7 +56,8 @@ export function RadioGroup(props: RadioGroupProps) {
   }, [value, items, updateSliderPosition]);
 
   const selectRadioItemAnimation = useCallback(() => {
-    if (!value || !innerButtonRef.current) return;
+    const hasActiveItem = items.some((item) => item.value === value);
+    if (!hasActiveItem || !innerButtonRef.current) return;
 
     const jello = [
       "scale3d(1, 1, 1)",
@@ -65,13 +68,12 @@ export function RadioGroup(props: RadioGroupProps) {
       "scale3d(1.05, 0.95, 1)",
       "scale3d(1, 1, 1)",
     ];
-    const opacity = [1, 1];
 
     innerButtonRef.current.animate(
-      { transform: jello, opacity },
+      { transform: jello, opacity: [1, 1] },
       { duration: 900, fill: "forwards" },
     );
-  }, [value]);
+  }, [items, value]);
 
   useEffect(() => {
     selectRadioItemAnimation();
@@ -80,13 +82,16 @@ export function RadioGroup(props: RadioGroupProps) {
   return (
     <div
       ref={radioContainerRef}
-      className="relative flex items-center justify-center overflow-hidden rounded-3xl border-2 border-[var(--border-strong)] bg-[var(--card)] text-[color:var(--foreground)]/72"
+      className={cn(
+        "relative flex items-center justify-center overflow-hidden rounded-(--ui-radius-pill) border-2 border-(--ui-color-border-strong) bg-(--ui-color-card) text-(--ui-color-foreground)/72",
+        className,
+      )}
     >
       {items.map((item) => (
         <div
           key={item.value}
           onClick={() => onRadioItemClick(item.value)}
-          className="flex cursor-pointer items-center justify-center px-6 py-1.5 transition-colors duration-150 hover:text-foreground"
+          className="flex cursor-pointer items-center justify-center px-6 py-1.5 transition-colors duration-150 hover:text-(--ui-color-foreground)"
         >
           {item.label}
         </div>
@@ -100,10 +105,7 @@ export function RadioGroup(props: RadioGroupProps) {
         }}
         className="pointer-events-none absolute left-0 top-0.75 mix-blend-difference duration-300 ease-in-out"
       >
-        <div
-          ref={innerButtonRef}
-          className="h-full w-full rounded-[50px] bg-foreground"
-        ></div>
+        <div ref={innerButtonRef} className="h-full w-full rounded-(--ui-radius-pill) bg-(--ui-color-foreground)"></div>
       </div>
     </div>
   );

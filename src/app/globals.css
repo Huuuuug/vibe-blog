@@ -1,45 +1,4 @@
-﻿@import "tailwindcss";
-
-:root {
-  --background: #f6f1e8;
-  --foreground: #1c2421;
-  --muted: #66716a;
-  --card: rgba(255, 251, 246, 0.8);
-  --card-strong: rgba(255, 250, 244, 0.92);
-  --border: rgba(28, 36, 33, 0.1);
-  --border-strong: rgba(28, 36, 33, 0.16);
-  --accent: #1f6b5d;
-  --accent-soft: rgba(31, 107, 93, 0.1);
-  --shadow: 0 22px 60px rgba(58, 49, 40, 0.08);
-  --page-bg:
-    radial-gradient(circle at top left, rgba(91, 146, 128, 0.12), transparent 24%),
-    radial-gradient(circle at 82% 18%, rgba(201, 158, 98, 0.12), transparent 18%),
-    linear-gradient(180deg, #fbf7f1 0%, #f5efe6 52%, #ede5db 100%);
-}
-
-:root[data-theme="dark"] {
-  --background: #0f1513;
-  --foreground: #edf3ef;
-  --muted: #8f9d96;
-  --card: rgba(20, 27, 25, 0.8);
-  --card-strong: rgba(15, 22, 20, 0.92);
-  --border: rgba(161, 180, 171, 0.16);
-  --border-strong: rgba(161, 180, 171, 0.24);
-  --accent: #7ac7aa;
-  --accent-soft: rgba(122, 199, 170, 0.14);
-  --shadow: 0 22px 60px rgba(0, 0, 0, 0.3);
-  --page-bg:
-    radial-gradient(circle at top left, rgba(72, 123, 107, 0.18), transparent 24%),
-    radial-gradient(circle at 82% 18%, rgba(111, 89, 57, 0.2), transparent 18%),
-    linear-gradient(180deg, #141a17 0%, #0f1513 52%, #0b100d 100%);
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-body);
-  --font-mono: var(--font-mono);
-}
+@import "tailwindcss";
 
 * {
   box-sizing: border-box;
@@ -53,7 +12,10 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--page-bg);
+  background:
+    radial-gradient(circle at top left, rgba(91, 146, 128, 0.12), transparent 24%),
+    radial-gradient(circle at 82% 18%, rgba(201, 158, 98, 0.12), transparent 18%),
+    linear-gradient(180deg, #fbf7f1 0%, #f5efe6 52%, #ede5db 100%);
   color: var(--foreground);
   font-family:
     var(--font-body),
@@ -67,6 +29,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 180ms ease, color 180ms ease, background 180ms ease;
+}
+
+:root[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at top left, rgba(72, 123, 107, 0.18), transparent 24%),
+    radial-gradient(circle at 82% 18%, rgba(111, 89, 57, 0.2), transparent 18%),
+    linear-gradient(180deg, #141a17 0%, #0f1513 52%, #0b100d 100%);
 }
 
 h1,
